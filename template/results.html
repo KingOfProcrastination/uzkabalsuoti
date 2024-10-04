@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Rezultatai{% endblock %}
+{% block header %}Rezultatai{% endblock %}
+
+{% block extra_css %}
+<style>
+    .results-section {
+        background-color: white;
+        border-radius: var(--border-radius);
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .result-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+    }
+    .result-item:last-child {
+        border-bottom: none;
+    }
+    .similarity-bar {
+        height: 10px;
+        background-color: #eee;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+    .similarity-fill {
+        height: 100%;
+        background-color: var(--primary-color);
+        transition: width 1s ease-out;
+    }
+    .back-btn {
+        display: inline-block;
+        background-color: var(--primary-color);
+        color: white;
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: var(--border-radius);
+        margin-top: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="results-section">
+        <h2>Panašumas su Seimo nariais:</h2>
+        {% for member in member_results %}
+        <div class="result-item">
+            <span>{{ member.name }}</span>
+            <span>{{ "%.2f"|format(member.similarity) }}%</span>
+        </div>
+        <div class="similarity-bar">
+            <div class="similarity-fill" style="width: 0%;" data-width="{{ member.similarity }}%"></div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="results-section">
+        <h2>Panašumas su frakcijomis:</h2>
+        {% for group in group_results %}
+        <div class="result-item">
+            <span>{{ group.name }}</span>
+            <span>{{ "%.2f"|format(group.similarity) }}%</span>
+        </div>
+        <div class="similarity-bar">
+            <div class="similarity-fill" style="width: 0%;" data-width="{{ group.similarity }}%"></div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <a href="{{ url_for('index') }}" class="back-btn">Grįžti į pradžią</a>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    window.addEventListener('load', function() {
+        document.querySelectorAll('.similarity-fill').forEach(fill => {
+            setTimeout(() => {
+                fill.style.width = fill.dataset.width;
+            }, 100);
+        });
+    });
+</script>
+{% endblock %}

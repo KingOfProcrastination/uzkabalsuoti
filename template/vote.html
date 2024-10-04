@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Balsuoti{% endblock %}
+{% block header %}Balsuoti{% endblock %}
+
+{% block extra_css %}
+<style>
+    .law-card {
+        background-color: white;
+        border-radius: var(--border-radius);
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .vote-options {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+    .vote-btn {
+        flex: 1;
+        margin: 0 10px;
+        padding: 15px;
+        border: 2px solid;
+        background-color: transparent;
+        font-weight: bold;
+        transition: background-color 0.3s, color 0.3s;
+    }
+    .vote-btn.uz {
+        color: var(--tertiary-color);
+        border-color: var(--tertiary-color);
+    }
+    .vote-btn.uz.selected {
+        background-color: var(--tertiary-color);
+        color: white;
+    }
+    .vote-btn.pries {
+        color: var(--secondary-color);
+        border-color: var(--secondary-color);
+    }
+    .vote-btn.pries.selected {
+        background-color: var(--secondary-color);
+        color: white;
+    }
+    .vote-btn.susilaikyti {
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    .vote-btn.susilaikyti.selected {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    .submit-votes {
+        background-color: var(--tertiary-color);
+        color: white;
+        font-size: 18px;
+        padding: 15px 30px;
+        margin-top: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <form action="{{ url_for('vote') }}" method="post">
+        {% for law in law_changes %}
+        <div class="law-card">
+            <h3>{{ law.category }}</h3>
+            <p>{{ law.summary }}</p>
+            <div class="vote-options">
+                <button type="button" class="vote-btn uz" data-vote="Už" data-law-id="{{ law.id }}">Už</button>
+                <button type="button" class="vote-btn pries" data-vote="Prieš" data-law-id="{{ law.id }}">Prieš</button>
+                <button type="button" class="vote-btn susilaikyti selected" data-vote="Susilaikyti" data-law-id="{{ law.id }}">Susilaikyti</button>
+            </div>
+            <input type="hidden" name="vote_{{ law.id }}" value="Susilaikyti">
+        </div>
+        {% endfor %}
+        <button type="submit" class="submit-votes">Pateikti balsus</button>
+    </form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.querySelectorAll('.vote-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const lawId = this.dataset.lawId;
+            const vote = this.dataset.vote;
+            const buttons = this.parentElement.querySelectorAll('.vote-btn');
+            buttons.forEach(b => b.classList.remove('selected'));
+            this.classList.add('selected');
+            this.parentElement.parentElement.querySelector(`input[name="vote_${lawId}"]`).value = vote;
+        });
+    });
+</script>
+{% endblock %}

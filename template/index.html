@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+    .category-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* Three buttons per row */
+        gap: 15px; /* Add some space between buttons */
+        margin-bottom: 30px;
+    }
+    .category-btn {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 15px;
+        border-radius: var(--border-radius);
+        text-align: center;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    .category-btn.selected {
+        background-color: var(--primary-dark);
+    }
+    .control-buttons {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    .control-btn {
+        background-color: var(--secondary-color);
+        color: white;
+    }
+    .num-laws {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+    .num-laws label {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+    }
+    .submit-btn {
+        background-color: var(--tertiary-color);
+        color: white;
+        font-size: 18px;
+        padding: 15px 30px;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+    <div class="control-buttons">
+        <button id="selectAll" class="control-btn">Pažymėti visas</button>
+        <button id="deselectAll" class="control-btn">Atžymėti visas</button>
+    </div>
+
+    <form action="{{ url_for('index') }}" method="post">
+        <div class="category-grid">
+            {% for category in categories %}
+            <div class="category-btn" data-category="{{ category }}">
+                {{ category }}
+                <input type="checkbox" name="categories" value="{{ category }}" style="display: none;">
+            </div>
+            {% endfor %}
+        </div>
+
+        <h3>Pasirinkti skaičių</h3>
+        <p>Didesnis skaičius grąžina tikslesnius rezultatus</p>
+        <div class="num-laws">
+            <label><input type="radio" name="num_laws" value="5" checked> 5</label>
+            <label><input type="radio" name="num_laws" value="10"> 10</label>
+            <label><input type="radio" name="num_laws" value="20"> 20</label>
+        </div>
+
+        <button type="submit" class="submit-btn">Pradėti</button>
+    </form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.classList.toggle('selected');
+            const checkbox = this.querySelector('input[type="checkbox"]');
+            checkbox.checked = !checkbox.checked;
+        });
+    });
+
+    document.getElementById('selectAll').addEventListener('click', function() {
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.classList.add('selected');
+            btn.querySelector('input[type="checkbox"]').checked = true;
+        });
+    });
+
+    document.getElementById('deselectAll').addEventListener('click', function() {
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.classList.remove('selected');
+            btn.querySelector('input[type="checkbox"]').checked = false;
+        });
+    });
+</script>
+{% endblock %}
