@@ -61,6 +61,17 @@
 {% endblock %}
 
 {% block content %}
+    <div class="instructions">
+        <h2>Kaip balsuoti</h2>
+        <p>Šiame puslapyje jūs rasite atsitiktinai atrinktus Seimo balsavimus. Kiekviename balsavime:
+            <ol>
+                <li>Perskaitykite įstatymo pakeitimo santrauką.</li>
+                <li>Pasirinkite savo poziciją: "Už", "Prieš" arba "Susilaikyti".</li>
+                <li>Apsvarstykite kiekvieną balsavimą atskirai ir nepriklausomai nuo kitų.</li>
+            </ol>
+        Baigę balsuoti, spauskite mygtuką "Pateikti balsus" puslapio apačioje, kad gautumėte rezultatus.</p>
+    </div>
+
     <form action="{{ url_for('vote') }}" method="post">
         {% for law in law_changes %}
         <div class="law-card">

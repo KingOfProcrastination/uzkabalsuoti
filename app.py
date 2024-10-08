@@ -107,7 +107,7 @@ def calculate_results(user_votes):
     party_results.sort(key=lambda x: x['similarity'], reverse=True)
     group_results.sort(key=lambda x: x['similarity'], reverse=True)
 
-    return member_results[:5], party_results, group_results
+    return member_results[:10], party_results, group_results
 
 if __name__ == '__main__':
     app.run(debug=True)

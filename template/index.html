@@ -46,6 +46,28 @@
         font-size: 18px;
         padding: 15px 30px;
     }
+    .control-buttons button, .category-btn, .num-laws button, .start-btn {
+        padding: 5px 10px;
+        background-color: transparent;
+        border: 1px solid #007bff;
+        color: #007bff;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+    .category-btn.selected, .num-laws button.selected {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .start-btn {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+    }
 </style>
 {% endblock %}
 
