@@ -44,16 +44,16 @@ def results():
     if not votes:
         return redirect(url_for('index'))
 
-    member_results, group_results = calculate_results(votes)
-    return render_template('results.html', member_results=member_results, group_results=group_results)
+    member_results, party_results, group_results = calculate_results(votes)
+    return render_template('results.html', member_results=member_results, party_results=party_results, group_results=group_results)
 
 def get_random_law_changes(categories, num_laws):
-    laws = DB_SESSION.query(Law).filter(Law.document_category.in_(categories)).order_by(db.func.random()).limit(num_laws).all()
+    laws = DB_SESSION.query(Law).filter(Law.document_category.in_(categories), Law.document_importance_score.in_(['7', '8', '9', '10'])).order_by(db.func.random()).limit(num_laws).all()
     return [{"id": law.vote_id, "summary": law.document_summary, "category": law.document_category} for law in laws]
-
 
 def calculate_results(user_votes):
     member_results = []
+    party_results = {}
     group_results = {}
 
     for vote_key, user_vote in user_votes.items():
@@ -78,6 +78,12 @@ def calculate_results(user_votes):
                         m['total_votes'] += 1
                         break
 
+            if member.nominating_party not in party_results:
+                party_results[member.nominating_party] = {'similarity': similarity, 'total_votes': 1}
+            else:
+                party_results[member.nominating_party]['similarity'] += similarity
+                party_results[member.nominating_party]['total_votes'] += 1
+
             if member.group not in group_results:
                 group_results[member.group] = {'similarity': similarity, 'total_votes': 1}
             else:
@@ -87,15 +93,21 @@ def calculate_results(user_votes):
     for member in member_results:
         member['similarity'] = (member['similarity'] / member['total_votes']) * 100
 
+    party_results = [
+        {"name": party, "similarity": (data['similarity'] / data['total_votes']) * 100}
+        for party, data in party_results.items()
+    ]
+
     group_results = [
         {"name": group, "similarity": (data['similarity'] / data['total_votes']) * 100}
         for group, data in group_results.items()
     ]
 
     member_results.sort(key=lambda x: x['similarity'], reverse=True)
+    party_results.sort(key=lambda x: x['similarity'], reverse=True)
     group_results.sort(key=lambda x: x['similarity'], reverse=True)
 
-    return member_results[:5], group_results
+    return member_results[:5], party_results, group_results
 
 if __name__ == '__main__':
     app.run(debug=True)

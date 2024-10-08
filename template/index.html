@@ -51,6 +51,18 @@
 
 
 {% block content %}
+
+    <div class="info-pane">
+      <h2>Apie klausimyną</h2>
+      <p>Šis klausimynas leidžia jums palyginti savo nuomonę su Seimo narių balsavimais. Štai kaip tai veikia:</p>
+      <ol>
+        <li>Pasirinkite jus dominančias temas ir balsavimų skaičių.</li>
+        <li>Balsuokite dėl pasiūlytų įstatymų pakeitimų.</li>
+        <li>Gaukite rezultatus, parodančius, kiek jūsų nuomonė sutampa su Seimo nariais, frakcijomis ir partijomis.</li>
+      </ol>
+      <p>Tai padės jums geriau suprasti savo politines pažiūras ir kaip jos atitinka šios kadencijos Seimo narių pozicijas.</p>
+    </div>
+
     <div class="control-buttons">
         <button id="selectAll" class="control-btn">Pažymėti visas</button>
         <button id="deselectAll" class="control-btn">Atžymėti visas</button>
@@ -66,8 +78,8 @@
             {% endfor %}
         </div>
 
-        <h3>Pasirinkti skaičių</h3>
-        <p>Didesnis skaičius grąžina tikslesnius rezultatus</p>
+        <h3>Pasirinkite balsavimų skaičių</h3>
+        <p>Didesnis balsavimų skaičius leis tiksliau palyginti jūsų poziciją su Seimo nariais, partijomis ir frakcijomis</p>
         <div class="num-laws">
             <label><input type="radio" name="num_laws" value="5" checked> 5</label>
             <label><input type="radio" name="num_laws" value="10"> 10</label>

@@ -3,15 +3,15 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker, Session
 import os
 
-if 'RDS_DB_NAME' in os.environ:
+if 'RENDER_DB_NAME' in os.environ:
     DATABASES = {
         'default': {
             'ENGINE': 'postgresql',
-            'NAME': os.environ['RDS_DB_NAME'],
-            'USER': os.environ['RDS_USERNAME'],
-            'PASSWORD': os.environ['RDS_PASSWORD'],
-            'HOST': os.environ['RDS_HOSTNAME'],
-            'PORT': os.environ['RDS_PORT'],
+            'NAME': os.environ['RENDER_DB_NAME'],
+            'USER': os.environ['RENDER_USERNAME'],
+            'PASSWORD': os.environ['RENDER_PASSWORD'],
+            'HOST': os.environ['RENDER_HOSTNAME'],
+            'PORT': os.environ['RENDER_PORT'],
         }
     }
 else:
@@ -19,8 +19,8 @@ else:
         'default': {
             'ENGINE': 'postgresql',
             'NAME': 'elections_data',
-            'USER': '',
-            'PASSWORD': os.environ["password"] ,
+            'USER': 'postgres',
+            'PASSWORD': os.environ["DB_password"] ,
             'HOST': 'localhost',
             'PORT': '5432',
         }

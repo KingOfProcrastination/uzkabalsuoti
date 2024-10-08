@@ -109,6 +109,11 @@ celerybeat-schedule
 # SageMath parsed files
 *.sage.py
 
+
+# EC2 files
+'EC2_ins'
+'EC2_ins'.pub
+
 # Environments
 .env
 .venv

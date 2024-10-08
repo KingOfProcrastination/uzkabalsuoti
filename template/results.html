@@ -60,6 +60,19 @@
     </div>
 
     <div class="results-section">
+        <h2>Panašumas su nominuojančiomis partijomis::</h2>
+        {% for party in party_results %}
+        <div class="result-item">
+            <span>{{ party.name }}</span>
+            <span>{{ "%.2f"|format(party.similarity) }}%</span>
+        </div>
+        <div class="similarity-bar">
+            <div class="similarity-fill" style="width: 0%;" data-width="{{ party.similarity }}%"></div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="results-section">
         <h2>Panašumas su frakcijomis:</h2>
         {% for group in group_results %}
         <div class="result-item">
