@@ -10,8 +10,8 @@
     }
     .category-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive layout */
-        gap: 15px;
+        grid-template-columns: repeat(3, 1fr); /* Three buttons per row */
+        gap: 15px; /* Add some space between buttons */
         margin-bottom: 30px;
     }
     .category-btn {
@@ -28,9 +28,9 @@
         color: white;
     }
     /* Media query for small screens */
-    @media (max-width: 600px) {
+    @media (max-width: 768px) {
         .category-grid {
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Smaller columns on mobile */
+            grid-template-columns: 1fr; /* One button per row on mobile */
         }
     }
     .control-buttons {
@@ -136,73 +136,102 @@
 
 {% block scripts %}
 <script>
-    let selectedCategories = ['{{ categories[0] }}']; // Pre-select first category
+    let selectedCategories = ["{{ categories[0] }}"]; // Initially select the first category
     let selectedNumLaws = 5;
 
-    document.addEventListener('DOMContentLoaded', () => {
-        document.querySelector('.category-btn').classList.add('selected'); // Auto-select first button on load
+    // Ensure the first category button is selected by default on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const firstCategoryBtn = document.querySelector('.category-btn');
+        const firstCheckbox = firstCategoryBtn.querySelector('input[type="checkbox"]');
+
+        if (firstCategoryBtn) {
+            firstCategoryBtn.classList.add('selected');
+            firstCheckbox.checked = true; // Ensure the checkbox is checked for the first button
+        }
+
+        // Add event listeners for category buttons
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                toggleCategory(this);
+            });
+        });
     });
 
+    // Toggle categories and ensure the first button stays selected if no changes are made
     function toggleCategory(btn) {
-        btn.classList.toggle('selected');
         const category = btn.textContent;
-        if (selectedCategories.includes(category)) {
+        const checkbox = btn.querySelector('input[type="checkbox"]');
+
+        if (btn.classList.contains('selected')) {
+            // If the button is already selected, deselect it
+            btn.classList.remove('selected');
+            checkbox.checked = false;
             selectedCategories = selectedCategories.filter(c => c !== category);
         } else {
+            // Select the button and add the category to the list
+            btn.classList.add('selected');
+            checkbox.checked = true;
             selectedCategories.push(category);
+        }
+
+        // If no categories are selected, ensure the first one is automatically selected again
+        if (selectedCategories.length === 0) {
+            const firstCategoryBtn = document.querySelector('.category-btn');
+            const firstCheckbox = firstCategoryBtn.querySelector('input[type="checkbox"]');
+            firstCategoryBtn.classList.add('selected');
+            firstCheckbox.checked = true;
+            selectedCategories.push("{{ categories[0] }}");
         }
     }
 
+    // Select all categories
     function selectAll() {
         document.querySelectorAll('.category-btn').forEach(btn => {
+            const checkbox = btn.querySelector('input[type="checkbox"]');
             btn.classList.add('selected');
-            if (!selectedCategories.includes(btn.textContent)) {
-                selectedCategories.push(btn.textContent);
+            checkbox.checked = true;
+            const category = btn.textContent;
+            if (!selectedCategories.includes(category)) {
+                selectedCategories.push(category);
             }
         });
     }
 
+    // Deselect all categories
     function deselectAll() {
         document.querySelectorAll('.category-btn').forEach(btn => {
+            const checkbox = btn.querySelector('input[type="checkbox"]');
             btn.classList.remove('selected');
+            checkbox.checked = false;
         });
-        selectedCategories = [];
+        selectedCategories = []; // Clear the selected categories array
+
+        // Ensure that the first category is not selected
+        const firstCategoryBtn = document.querySelector('.category-btn');
+        const firstCheckbox = firstCategoryBtn.querySelector('input[type="checkbox"]');
+        firstCategoryBtn.classList.remove('selected'); // Deselect the first button
+        firstCheckbox.checked = false; // Uncheck the checkbox
     }
 
+    // Select number of laws
     function selectNumLaws(btn, num) {
         document.querySelectorAll('.num-laws button').forEach(b => b.classList.remove('selected'));
         btn.classList.add('selected');
         selectedNumLaws = num;
     }
 
+    // Start survey
     function startSurvey() {
         if (selectedCategories.length === 0) {
             alert('Prašome pasirinkti bent vieną kategoriją.');
             return;
         }
-        // Here you would typically send the selections to the server
+        // Redirect to the vote page
         window.location.href = "{{ url_for('vote') }}";
     }
-    document.querySelectorAll('.category-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            this.classList.toggle('selected');
-            const checkbox = this.querySelector('input[type="checkbox"]');
-            checkbox.checked = !checkbox.checked;
-        });
-    });
 
-    document.getElementById('selectAll').addEventListener('click', function() {
-        document.querySelectorAll('.category-btn').forEach(btn => {
-            btn.classList.add('selected');
-            btn.querySelector('input[type="checkbox"]').checked = true;
-        });
-    });
-
-    document.getElementById('deselectAll').addEventListener('click', function() {
-        document.querySelectorAll('.category-btn').forEach(btn => {
-            btn.classList.remove('selected');
-            btn.querySelector('input[type="checkbox"]').checked = false;
-        });
-    });
+    // Event listeners for select/deselect all buttons
+    document.getElementById('selectAll').addEventListener('click', selectAll);
+    document.getElementById('deselectAll').addEventListener('click', deselectAll);
 </script>
 {% endblock %}
