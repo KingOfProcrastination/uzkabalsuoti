@@ -20,7 +20,7 @@ else:
             'ENGINE': 'postgresql',
             'NAME': 'elections_data',
             'USER': 'postgres',
-            'PASSWORD': 'SaugauDuomenis456?', #os.environ["DB_password"] ,
+            'PASSWORD': os.environ["DB_password"] ,
             'HOST': 'localhost',
             'PORT': '5432',
         }

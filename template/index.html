@@ -2,23 +2,36 @@
 
 {% block extra_css %}
 <style>
+    .info-pane {
+        background-color: #f0f0f0;
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
     .category-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr); /* Three buttons per row */
-        gap: 15px; /* Add some space between buttons */
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive layout */
+        gap: 15px;
         margin-bottom: 30px;
     }
     .category-btn {
-        background-color: var(--primary-color);
-        color: white;
-        padding: 15px;
-        border-radius: var(--border-radius);
-        text-align: center;
+        padding: 10px;
+        background-color: transparent;
+        border: 1px solid #007bff;
+        color: #007bff;
+        border-radius: 5px;
         cursor: pointer;
-        transition: background-color 0.3s;
+        text-align: center;
     }
     .category-btn.selected {
-        background-color: var(--primary-dark);
+        background-color: #007bff;
+        color: white;
+    }
+    /* Media query for small screens */
+    @media (max-width: 600px) {
+        .category-grid {
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Smaller columns on mobile */
+        }
     }
     .control-buttons {
         display: flex;
@@ -68,6 +81,12 @@
         border: none;
         border-radius: 5px;
     }
+    .informational-text {
+        font-size: 0.85rem;
+        color: #666;
+        margin-top: 30px;
+        text-align: center;
+    }
 </style>
 {% endblock %}
 
@@ -110,10 +129,60 @@
 
         <button type="submit" class="submit-btn">Pradėti</button>
     </form>
+
+    <p class="informational-text">Svarbu: Šis įrankis nėra oficialus ir nesusietas su Seimu ar jokia valstybine institucija. Jis skirtas tik švietimo ir pramogos tikslams. Rezultatai nėra tikslūs ir neturi jokios teisinės galios.</p>
+
 {% endblock %}
 
 {% block scripts %}
 <script>
+    let selectedCategories = ['{{ categories[0] }}']; // Pre-select first category
+    let selectedNumLaws = 5;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelector('.category-btn').classList.add('selected'); // Auto-select first button on load
+    });
+
+    function toggleCategory(btn) {
+        btn.classList.toggle('selected');
+        const category = btn.textContent;
+        if (selectedCategories.includes(category)) {
+            selectedCategories = selectedCategories.filter(c => c !== category);
+        } else {
+            selectedCategories.push(category);
+        }
+    }
+
+    function selectAll() {
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.classList.add('selected');
+            if (!selectedCategories.includes(btn.textContent)) {
+                selectedCategories.push(btn.textContent);
+            }
+        });
+    }
+
+    function deselectAll() {
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.classList.remove('selected');
+        });
+        selectedCategories = [];
+    }
+
+    function selectNumLaws(btn, num) {
+        document.querySelectorAll('.num-laws button').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedNumLaws = num;
+    }
+
+    function startSurvey() {
+        if (selectedCategories.length === 0) {
+            alert('Prašome pasirinkti bent vieną kategoriją.');
+            return;
+        }
+        // Here you would typically send the selections to the server
+        window.location.href = "{{ url_for('vote') }}";
+    }
     document.querySelectorAll('.category-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             this.classList.toggle('selected');
